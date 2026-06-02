@@ -460,3 +460,6 @@ Ejemplo de respuesta de error estructurada (por defecto FastAPI):
 
 Opcionalmente, se pueden personalizar para devolver más contexto (no implementado en esta versión base).
 
+## Link del video
+
+https://www.loom.com/share/b0a7c7fdb33d4d8eac7cad4304c5b8fe
