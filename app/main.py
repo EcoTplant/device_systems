@@ -7,8 +7,8 @@ app = FastAPI(
                 "Operaciones CRUD completas con validaciones, filtros y manejo de errores.",
     version="2.0.0",
     contact={
-        "name": "Soporte device_systems",
-        "email": "soporte@device_systems.com",
+        "name": "Soporte devicesystems",
+        "email": "soporte@devicesystems.com",
     },
     license_info={
         "name": "MIT",
