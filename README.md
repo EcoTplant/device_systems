@@ -463,3 +463,85 @@ Opcionalmente, se pueden personalizar para devolver más contexto (no implementa
 ## Link del video
 
 https://www.loom.com/share/b0a7c7fdb33d4d8eac7cad4304c5b8fe
+
+
+### Fast API SQL ALCHEMY
+
+## device_systems API
+
+API REST completa para la gestión de usuarios del sistema **device_systems**.  
+Permite operaciones CRUD con validaciones, filtros, manejo de errores y documentación interactiva automática.
+
+# Tecnologías utilizadas
+
+- Python 3.13
+- FastAPI 0.115.0
+- Uvicorn (servidor ASGI)
+- Pydantic (validación de datos)
+- email-validator
+
+# Instalación de dependencias
+
+```bash
+python -m venv env
+source env/bin/activate  # o env\Scripts\activate en Windows
+pip install -r requirements.txt
+```
+
+# Ejecutar el servidor
+
+```bash
+
+uvicorn app.main:app --reload
+
+```
+
+## Ejemplos de peticiones y respuestas
+
+# 1. Crear un usuario válido.
+
+![Crear usuario válido](/images/alch1.png)
+
+# 2. Intentar crear un usuario con email repetido.
+
+![Crear un usuario con email repetido](/images/alch2.png)
+
+# 3. Listar usuarios.
+
+![Listar usuarios](/images/alch3.png)
+
+# 4. Consultar usuario por ID.
+
+![Consultar usuario por ID](/images/alch4.png)
+
+# 5. Consultar usuario inexistente.
+
+![Consultar usuario inexistente](/images/alch5.png)
+
+# 6. Filtrar usuarios por rol.
+
+![Filtrar usuarios por rol](/images/alch6.png)
+
+# 7. Filtrar usuarios activos.
+
+![Filtrar usuarios activos](/images/alch7.png)
+
+# 8. Actualizar usuario completo con PUT.
+
+![Actualizar usuario completo con PUT](/images/alch8.png)
+
+# 9. Actualizar parcialmente un usuario con PATCH.
+
+![Actualizar parcialmente un usuario con PATCH](/images/alch9.png)
+
+# 10. Eliminar usuario con DELETE.
+
+![Eliminar usuario con DELETE](/images/alch10.png)
+
+# 11. Validar que el usuario eliminado ya no exista.
+
+![Validar que el usuario eliminado ya no exista](/images/alch11.png)
+
+
+### Link del video
+
