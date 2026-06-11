@@ -7,14 +7,14 @@ class UserRole(str, Enum):
     support = "support"
     user = "user"
 
-# Modelo para crear (POST) y actualización completa (PUT)
+# Para creación y actualización completa (todos los campos requeridos)
 class UserCreate(BaseModel):
-    name: str = Field(..., min_length=3, description="Nombre completo, mínimo 3 caracteres")
+    name: str = Field(..., min_length=3, description="Nombre mínimo 3 caracteres")
     email: EmailStr = Field(..., description="Correo electrónico válido")
     role: UserRole = Field(default=UserRole.user, description="Rol del usuario")
     is_active: bool = Field(default=True, description="Estado activo/inactivo")
 
-# Modelo para actualización parcial (PATCH) – todos opcionales
+# Para actualización parcial (todos opcionales)
 class UserUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3)
     email: Optional[EmailStr] = None
@@ -30,4 +30,4 @@ class UserResponse(BaseModel):
     is_active: bool
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Para convertir desde diccionario
