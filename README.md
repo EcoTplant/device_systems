@@ -496,6 +496,21 @@ uvicorn app.main:app --reload
 
 ```
 
+## Captura de la estructura del proyecto
+
+![Estructura proyecto](/images/estructura.png)
+
+## Captura de la base de datos generada
+
+![Base de datos](/images/bd.png)
+
+## Capturas de Swagger UI
+
+![Swaggerui](/images/swgui.png)
+
+![Esquema](/images/esquema.png)
+
+
 ## Ejemplos de peticiones y respuestas
 
 # 1. Crear un usuario válido.
@@ -543,5 +558,49 @@ uvicorn app.main:app --reload
 ![Validar que el usuario eliminado ya no exista](/images/alch11.png)
 
 
+## Diferencia entre modelo SQLAlchemy y schema Pydantic
+
+| **Modelo SQLAlchemy** | **Schema Pydantic** |
+|-----------------------|----------------------|
+| Define la estructura de la tabla en la base de datos. | Define la estructura de datos para la API (entrada/salida). |
+| Hereda de `DeclarativeBase`. | Hereda de `BaseModel`. |
+| Usa tipos SQL: `Column(Integer)`, `Column(String)`. | Usa tipos Python + validaciones: `str`, `int`, `EmailStr`, `Field(...)`. |
+| Contiene metadatos de persistencia: `nullable`, `unique`, `default`. | Define reglas de validación de negocio: `min_length`, `pattern`, `ge`, `le`. |
+| No se expone directamente al cliente (puede tener campos internos como `password_hash`). | Controla exactamente qué campos se reciben y se devuelven (seguridad, ocultación). |
+| Se convierte a schema Pydantic para enviar respuestas. | Se convierte a modelo SQLAlchemy para guardar en BD (con `**model_dump()`). |
+
+**Ejemplo práctico:**
+
+```python
+# SQLAlchemy Model
+class User(Base):
+    __tablename__ = "usuarios"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    password_hash = Column(String(255))  # No se expone
+
+# Pydantic Schema (respuesta)
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    # password_hash no está presente → seguro
+```
+
+## Reflexión final sobre la importancia de usar persistencia en una API
+
+> **La persistencia es el corazón de cualquier API funcional en un entorno real.** Sin almacenamiento permanente, los datos se pierden cada vez que el servidor se reinicia, lo que hace imposible mantener estado entre sesiones de usuario, facturación, historiales, etc.
+>
+> Al integrar **SQLAlchemy** con FastAPI, logramos:
+> - **Datos duraderos**: la información sobrevive a reinicios y despliegues.
+> - **Consultas eficientes**: el ORM traduce operaciones Python a SQL optimizado.
+> - **Integridad referencial**: podemos relacionar tablas (usuarios, pedidos, productos) y mantener consistencia con claves foráneas.
+> - **Escalabilidad**: pasar de SQLite (desarrollo) a PostgreSQL/MySQL (producción) solo cambia la URL de conexión.
+> - **Seguridad**: previene inyección SQL mediante parametrización automática.
+>
+> Sin persistencia, una API es solo un juguete de demostración. Con una base de datos robusta, se convierte en una herramienta útil para aplicaciones reales. Por eso, en este proyecto hemos evolucionado desde una lista en memoria hacia un modelo con SQLAlchemy, sentando las bases para un sistema profesional.
+
 ### Link del video
 
+https://www.loom.com/share/c019616fd9244ac7912ff8d87e2339b8

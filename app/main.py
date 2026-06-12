@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from app.routes import user_routes
+from app.database import engine, Base
+
+# Crear las tablas en la base de datos (si no existen)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="device_systems API",
@@ -8,7 +12,7 @@ app = FastAPI(
     version="3.0.0",
     contact={
         "name": "Soporte device_systems",
-        "email": "soporte@devicesystems.com",  # sin guión bajo
+        "email": "soporte@devicesystems.com",
     },
     license_info={
         "name": "MIT",
@@ -20,7 +24,6 @@ app = FastAPI(
 # Incluir rutas
 app.include_router(user_routes.router)
 
-# Middleware opcional para cabeceras personalizadas
 @app.middleware("http")
 async def add_custom_headers(request, call_next):
     response = await call_next(request)
