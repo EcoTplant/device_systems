@@ -1,36 +1,24 @@
 from fastapi import FastAPI
-from app.routes import user_routes
-from app.database import engine, Base
+from app.database.connection import engine, Base
+from app.routes import user_routes, device_routes, loan_routes
 
-# Crear las tablas en la base de datos (si no existen)
+# Crear tablas (en caso de no usar migraciones aún)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="device_systems API",
-    description="API REST para la gestión de usuarios del sistema device_systems.\n\n"
-                "Operaciones CRUD completas con validaciones, filtros y manejo de errores.",
+    description="API REST para gestión de usuarios, dispositivos y préstamos",
     version="3.0.0",
     contact={
         "name": "Soporte device_systems",
         "email": "soporte@devicesystems.com",
     },
-    license_info={
-        "name": "MIT",
-    },
-    docs_url="/docs",
-    redoc_url="/redoc"
 )
 
-# Incluir rutas
 app.include_router(user_routes.router)
+app.include_router(device_routes.router)
+app.include_router(loan_routes.router)
 
-@app.middleware("http")
-async def add_custom_headers(request, call_next):
-    response = await call_next(request)
-    response.headers["X-App-Name"] = "device_systems"
-    response.headers["X-API-Version"] = "3.0"
-    return response
-
-@app.get("/", tags=["Root"])
+@app.get("/")
 def root():
-    return {"message": "Bienvenido a device_systems API", "docs": "/docs"}
+    return {"message": "device_systems API v3", "docs": "/docs"}
