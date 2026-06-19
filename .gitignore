@@ -2,3 +2,7 @@ env/
 __pycache__/
 .venv/
 app.db
+alembic/env.py
+alembic/README
+alembic/versions/07c350188e85_initial_migration.py
+alembic/script.py.mako
