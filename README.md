@@ -822,3 +822,5 @@ INFO  [alembic.runtime.migration] Running upgrade 07c350188e85 -> cb2795df4360, 
 
 
 ### Link del video
+
+https://www.loom.com/share/92c5650ec7b648fab5ee7b5c55330117
