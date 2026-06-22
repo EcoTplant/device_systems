@@ -604,3 +604,221 @@ class UserResponse(BaseModel):
 ### Link del video
 
 https://www.loom.com/share/c019616fd9244ac7912ff8d87e2339b8
+
+
+
+# device_systems (versión con Alembic y relaciones)
+
+API REST para la gestión de **usuarios**, **dispositivos** y **préstamos**.  
+Incluye migraciones con **Alembic**, relaciones **One‑to‑Many** y **Many‑to‑One**, consultas con **joins** y filtros avanzados.
+
+---
+
+## Tecnologías utilizadas
+
+- Python 3.13
+- FastAPI
+- SQLAlchemy (ORM)
+- Alembic (migraciones)
+- SQLite (base de datos)
+- Pydantic
+- Uvicorn
+
+---
+
+## Instalación y ejecución
+
+### 1. Clonar y crear entorno virtual
+
+```bash
+python -m venv env
+source env/bin/activate   # Linux/Mac
+env\Scripts\activate      # Windows
+```
+
+### 2. Instalar dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configurar y aplicar migraciones
+
+```bash
+alembic upgrade head
+```
+
+### 4. Ejecutar el servidor
+
+```bash
+uvicorn app.main:app --reload
+```
+
+La API estará disponible en `http://localhost:8000`.
+
+---
+
+## Migraciones con Alembic
+
+### Captura de `alembic init`
+
+![Inicialización de Alembic](images/albi.png)
+
+```bash
+$ alembic init alembic
+Creating directory /workspaces/device_systems/alembic ... done
+Creating file /workspaces/device_systems/alembic/README ... done
+Creating file /workspaces/device_systems/alembic/script.py.mako ... done
+Creating file /workspaces/device_systems/alembic/env.py ... done
+Creating file /workspaces/device_systems/alembic.ini ... done
+```
+
+---
+
+### Captura de `alembic revision --autogenerate`
+
+![Alembic revision](images/albr.png)
+
+```bash
+$ alembic revision --autogenerate -m "create users devices loans tables"
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+Generating /workspaces/device_systems/alembic/versions/cb2795df4360_.py ...  done
+```
+
+---
+
+### Captura de `alembic upgrade head`
+
+![Alembic upgrade](images/albup.png)
+
+```bash
+$ alembic upgrade head
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 07c350188e85 -> cb2795df4360, empty message
+```
+
+---
+
+### Captura de la estructura de tablas (desde DB Browser o `sqlite3`)
+
+![Estructura tabla usuarios](images/albt1.png)
+
+![Estructura tabla devices](images/albt2.png)
+
+![Estructura tabla loans](images/albt3.png)
+
+
+---
+
+## Documentación interactiva (Swagger UI)
+
+### Vista general de `/docs`
+
+![Endpoints users](images/albd1.png)
+
+![Endpoints devices](images/albd2.png)
+
+![Endpoints loans](images/albd3.png)
+
+---
+
+### Detalle de un endpoint (ej. POST /loans)
+
+![Endpoints loans](images/albd4.png)
+
+---
+
+## Evidencia de pruebas funcionales
+
+### 1. Crear usuario – `POST /users`
+
+
+![Crear usuario](images/alb1.png)
+
+
+![Crear usuario 1](images/alb1.1.png)
+
+---
+
+### 2. Crear dispositivo – `POST /devices`
+
+
+![Crear dispositivo](images/alb2.png)
+
+![Crear dispositivo 2](images/alb22.png)
+
+---
+
+### 3. Crear préstamo – `POST /loans`
+
+![Crear préstamo](images/alb3.png)
+
+![Crear segundo préstamo](images/alb5.png)
+
+---
+
+### 4. Consulta con joins – `GET /loans/details`
+
+![Consulta con joins](images/alb4.png)
+
+![Consulta con joins 2](images/alb66.png)
+
+---
+
+### 5. Filtros aplicados
+
+#### a) Filtrar préstamos por estado – `GET /loans?status=active - returned`
+
+![Filtrar préstamos por estado active](images/alb7.png)
+
+![Filtrar préstamos por estado returned](images/alb77.png)
+
+#### b) Filtrar por tipo de dispositivo – `GET /loans?device_type=laptop`
+
+![Filtrar por tipo de dispositivo](images/alb8.png)
+
+
+#### c) Filtrar por email de usuario – `GET /loans/user/{user_id}`
+
+![Filtrar por id de usuario](images/alb9.png)
+
+---
+
+### 6. Devolución de dispositivo – `PATCH /loans/1/return`
+
+![Devolución de dispositivo](images/alb10.png)
+
+---
+### 7. Verificar que el dispositivo vuelve a estar disponible (GET /devices/{device_id})
+
+![Verificar que el dispositivo vuelve a estar disponible](images/alb11.png)
+
+### 8. Consultar historial de préstamos del dispositivo – `GET /loans/device/1`
+
+![Consultar historial de préstamos del dispositivo](images/alb12.png)
+
+---
+
+## Reflexión final
+
+> **Sobre migraciones:**  
+> Alembic permite **versionar** los cambios en la estructura de la base de datos. Esto es fundamental en entornos colaborativos y productivos, ya que garantiza que todos los entornos (desarrollo, pruebas, producción) tengan el mismo esquema. Sin migraciones, la base de datos se vuelve un punto frágil que puede romperse al añadir nuevas funcionalidades.
+
+> **Sobre relaciones:**  
+> Definir relaciones con `ForeignKey` y `relationship()` no solo simplifica el código, sino que **preserva la integridad referencial** a nivel de base de datos. La relación `User → Loan → Device` refleja fielmente el dominio del problema y permite recorrer los datos de forma natural, sin escribir consultas SQL complejas a mano.
+
+> **Sobre consultas con joins:**  
+> Los `joins` nos permiten **enriquecer la respuesta** de la API con información de varias tablas en una sola llamada. Gracias a SQLAlchemy, podemos construir consultas con filtros dinámicos (`where`, `like`, `or_`) que mejoran la experiencia del usuario final y reducen el número de peticiones al servidor.
+
+> En conjunto, estas herramientas transforman una API básica en un sistema robusto, mantenible y escalable. El tiempo invertido en aprender Alembic, diseñar buenas relaciones y dominar las consultas avanzadas se amortiza con creces cuando la aplicación crece o cambia de requisitos.
+
+
+### Link del video

@@ -1,3 +1,6 @@
+"""
+Comentamos las dependencias ya que no se usa con base de datos
+
 from fastapi import Depends, HTTPException, status
 from app.services.user_service import get_user_by_id
 from app.data.users_db import fake_db
@@ -22,3 +25,5 @@ def check_email_duplicate(email: str, exclude_user_id: Optional[int] = None):
                 detail="El correo electrónico ya está registrado"
             )
     return email
+
+    """"

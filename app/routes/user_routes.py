@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.schemas.user_schema import UserCreate, UserResponse, UserRole, UserUpdate
 from app.services import user_service
 from app.database import get_db
-from app.dependencies.user_dependencies import get_user_or_404  # ya no se usa con BD, pero lo dejamos como ejemplo
+# from app.dependencies.user_dependencies import get_user_or_404  # ya no se usa con BD, pero lo dejamos como ejemplo
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
