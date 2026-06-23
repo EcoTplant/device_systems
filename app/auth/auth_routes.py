@@ -10,11 +10,17 @@ from app.models.user_model import User
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register", response_model=UserAuthResponse, status_code=201)
-def register(user_data: UserRegister, db: Session = Depends(get_db)):
+@limiter.limit("3/minute")
+def register(
+    request: Request, 
+    user_data: UserRegister, db: Session = Depends(get_db)):
     return register_user(db, user_data)
 
 @router.post("/login", response_model=Token)
-def login(user_creds: UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def login(
+        request: Request, 
+    user_creds: UserLogin, db: Session = Depends(get_db)):
     access_token = authenticate_user(db, user_creds.email, user_creds.password)
     if not access_token:
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
