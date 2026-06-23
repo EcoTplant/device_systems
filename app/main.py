@@ -1,6 +1,15 @@
 from fastapi import FastAPI
 from app.database.connection import engine, Base
 from app.routes import user_routes, device_routes, loan_routes
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # para desarrollo
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Crear tablas (en caso de no usar migraciones aún)
 Base.metadata.create_all(bind=engine)
