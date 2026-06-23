@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from app.database.connection import engine, Base
 from app.routes import user_routes, device_routes, loan_routes
 from fastapi.middleware.cors import CORSMiddleware
+from app.middlewares.request_middleware import RequestMiddleware
+
+app.add_middleware(RequestMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
