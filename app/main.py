@@ -26,13 +26,17 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="device_systems API",
-    description="API REST para gestión de usuarios, dispositivos y préstamos",
+    description="API REST segura para gestión de usuarios, dispositivos y préstamos",
     version="3.0.0",
-    contact={
-        "name": "Soporte device_systems",
-        "email": "soporte@devicesystems.com",
-    },
+    contact={"name": "Soporte", "email": "soporte@devicesystems.com"},
+    openapi_tags=[
+        {"name": "Auth", "description": "Autenticación y registro"},
+        {"name": "Users", "description": "Gestión de usuarios (protegido)"},
+        {"name": "Devices", "description": "Gestión de dispositivos (protegido)"},
+        {"name": "Loans", "description": "Gestión de préstamos (protegido)"},
+    ],
 )
+
 
 app.include_router(user_routes.router)
 app.include_router(device_routes.router)
