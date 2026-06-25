@@ -26,11 +26,12 @@ def create_user(db: Session, user_data: UserCreate):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El correo electrónico ya está registrado"
         )
-    new_user = User(
+      new_user = User(
         name=user_data.name,
         email=user_data.email,
-        role=user_data.role,
-        is_active=user_data.is_active
+        hashed_password=user_data.hashed_password,  # Ya debe venir hasheado
+        role=user_data.role or "user",
+        is_active=user_data.is_active if hasattr(user_data, 'is_active') else True
     )
     db.add(new_user)
     db.commit()
