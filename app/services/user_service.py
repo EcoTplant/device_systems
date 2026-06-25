@@ -14,6 +14,10 @@ def get_all_users(db: Session, role: str = None, is_active: bool = None):
 def get_user_by_id(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
+    # NUEVA FUNCIÓN: obtener usuario por email (para autenticación)
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+
 def create_user(db: Session, user_data: UserCreate):
     # Verificar email duplicado
     existing = db.query(User).filter(User.email == user_data.email).first()
