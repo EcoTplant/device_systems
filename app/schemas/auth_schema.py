@@ -7,7 +7,7 @@ import re
 class UserRegister(BaseModel):
     name: str = Field(..., min_length=3, max_length=100)
     email: EmailStr
-    password: str = Field(..., min_length=8)
+    password: str = Field(..., min_length=8, max_length=72)
     role: Optional[str] = Field("user", pattern="^(admin|support|user)$")
 
     @field_validator("password")

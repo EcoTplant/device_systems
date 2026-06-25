@@ -824,3 +824,201 @@ INFO  [alembic.runtime.migration] Running upgrade 07c350188e85 -> cb2795df4360, 
 ### Link del video
 
 https://www.loom.com/share/92c5650ec7b648fab5ee7b5c55330117
+
+
+# device_systems API – Gestión de usuarios, dispositivos y préstamos con autenticación JWT
+
+API REST segura construida con **FastAPI**, **SQLAlchemy**, **Alembic** y **JWT**.  
+Permite gestionar usuarios, dispositivos y préstamos con control de acceso basado en roles, rate limiting, CORS y documentación interactiva Swagger/OpenAPI.
+
+---
+
+## Captura de la estructura del proyecto
+
+![estructura del proyecto](images1/e1.png)
+
+
+---
+
+## Captura de migración Alembic aplicada
+
+![migración Alembic aplicada](images1/0.png)
+
+![migraciones aplicadas](images1/e2.png)
+
+---
+
+## Autenticación y autorización
+
+### Captura del registro de usuario (`POST /auth/register`)
+
+![registro de usuario](images1/1.png)
+
+---
+
+### Captura del login y token generado (`POST /auth/login`)
+
+![login y token generado](images1/2.png)
+
+---
+
+### Captura de `/auth/me` (usuario autenticado)
+
+![lusuario autenticado](images1/6.png)
+
+---
+
+### Captura de acceso sin token (intento fallido)
+
+![intento fallido](images1/5.png)
+
+---
+
+### Captura de acceso con rol no permitido (`403 Forbidden`)
+
+![403 Forbidden](images1/9.png)
+
+---
+
+## Documentación Swagger/OpenAPI con OAuth2
+
+### Captura de Swagger con el botón "Authorize"
+
+![Authorize](images1/15s1.png)
+
+---
+
+## Middleware personalizado – Cabeceras HTTP
+
+### Captura de cabeceras del middleware
+
+![Cabeceras middleware](images1/13.png)
+
+---
+
+## Rate limiting (protección contra abuso)
+
+### Captura de prueba de rate limiting
+
+![Cabeceras middleware](images1/14.png)
+
+---
+
+## Configuración CORS
+
+El middleware CORS está configurado en `app/main.py` para permitir solicitudes desde orígenes específicos:
+
+```python
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+**Explicación:**  
+- `allow_origins`: lista de orígenes autorizados (frontend de desarrollo).  
+- `allow_credentials=True`: permite enviar cookies y cabeceras de autenticación.  
+- `allow_methods=["*"]`: permite todos los métodos HTTP (GET, POST, PUT, PATCH, DELETE).  
+- `allow_headers=["*"]`: permite todas las cabeceras personalizadas.
+
+**En producción**, no se recomienda usar `"*"` con `allow_credentials=True` porque vulnera la seguridad. Se deben listar explícitamente los dominios autorizados.
+
+---
+
+## Reflexión final – Importancia de la seguridad en APIs REST
+
+La seguridad es un pilar fundamental en cualquier API expuesta a internet. Durante el desarrollo de **device_systems**, hemos aplicado múltiples capas de protección:
+
+1. **Autenticación robusta** con JWT y hash de contraseñas (bcrypt).  
+   - Las contraseñas nunca se almacenan en texto plano.  
+   - Los tokens tienen caducidad y son firmados con una clave secreta.
+
+2. **Autorización basada en roles** (`admin`, `support`, `user`).  
+   - Cada recurso y operación está protegido según el rol del usuario autenticado.  
+   - Los intentos de acceso no autorizados devuelven `403 Forbidden`.
+
+3. **Rate limiting** (límite de peticiones) para prevenir ataques de fuerza bruta y denegación de servicio.  
+   - Endpoints sensibles como login y registro tienen límites estrictos.
+
+4. **CORS configurado** para restringir el acceso desde orígenes no autorizados, protegiendo contra ataques CSRF.
+
+5. **Validación de datos** en dos capas:  
+   - Pydantic valida el formato y las reglas de negocio en la entrada.  
+   - SQLAlchemy aplica constraints (NOT NULL, UNIQUE) a nivel de base de datos.
+
+6. **Middleware personalizado** que añade trazabilidad mediante cabeceras (`X-Request-ID`, `X-Process-Time`) y registra cada petición.
+
+> **Lección aprendida:** La seguridad no es un añadido; debe estar presente desde el diseño inicial. Una API sin autenticación, autorización y protección contra abusos es un riesgo para los datos y la infraestructura. Invertir en estas capas tempranamente garantiza un sistema robusto, confiable y profesional.
+
+---
+
+## Tabla de códigos de estado HTTP usados
+
+| Código | Significado               | Uso en la API |
+|--------|---------------------------|---------------|
+| 200    | OK                        | Respuestas exitosas (GET, PUT, PATCH) |
+| 201    | Created                   | POST (registro, creación) |
+| 204    | No Content                | DELETE exitoso |
+| 400    | Bad Request               | Datos inválidos, email duplicado |
+| 401    | Unauthorized              | Token ausente, inválido o expirado |
+| 403    | Forbidden                 | Rol insuficiente para la operación |
+| 404    | Not Found                 | Recurso no encontrado |
+| 422    | Unprocessable Entity      | Validación de Pydantic fallida |
+| 429    | Too Many Requests         | Límite de rate limiting excedido |
+
+---
+
+## Tecnologías utilizadas
+
+- **Python 3.13**
+- **FastAPI** – framework web
+- **SQLAlchemy** – ORM
+- **Alembic** – migraciones
+- **SQLite** – base de datos (desarrollo)
+- **Pydantic v2** – validación de datos
+- **JWT (python-jose)** – autenticación
+- **bcrypt** – hash de contraseñas
+- **slowapi** – rate limiting
+- **Uvicorn** – servidor ASGI
+
+---
+
+## Instalación y ejecución
+
+```bash
+# 1. Crear y activar entorno virtual
+python -m venv env
+source env/bin/activate  # o env\Scripts\activate en Windows
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+# 3. Configurar variables de entorno (.env)
+# (ver .env.example)
+
+# 4. Aplicar migraciones
+alembic upgrade head
+
+# 5. Ejecutar servidor
+uvicorn app.main:app --reload
+```
+
+---
+
+## Pruebas con Swagger
+
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+---
+
+**Desarrollado como proyecto integrador – device_systems**  
+*FastAPI · SQLAlchemy · JWT · Seguridad en APIs REST*
+```
+
+---
+
+### Link del video

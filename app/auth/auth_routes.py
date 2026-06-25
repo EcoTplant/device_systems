@@ -7,6 +7,7 @@ from app.services.auth_service import register_user, authenticate_user
 from app.dependencies.auth_dependency import get_current_user
 from app.models.user_model import User
 from app.rate_limit import limiter  # <-- Importar limiter
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
