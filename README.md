@@ -1022,3 +1022,5 @@ uvicorn app.main:app --reload
 ---
 
 ### Link del video
+
+https://youtu.be/yoOiIdoqLT8
