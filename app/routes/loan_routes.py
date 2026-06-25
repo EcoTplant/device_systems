@@ -6,7 +6,7 @@ from app.schemas.loan_schema import LoanCreate, LoanUpdate, LoanResponse, LoanDe
 from app.services import loan_service, user_service, device_service
 from app.dependencies.auth_dependency import get_current_active_user, require_admin_or_support
 from app.models.user_model import User
-from app.main import limiter
+from app.rate_limit import limiter
 
 router = APIRouter(prefix="/loans", tags=["Loans"])
 

@@ -1,5 +1,6 @@
 # app/schemas/auth_schema.py
 from pydantic import BaseModel, Field, EmailStr, field_validator, model_validator, ConfigDict
+from datetime import datetime
 from typing import Optional
 import re
 

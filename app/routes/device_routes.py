@@ -6,7 +6,7 @@ from app.schemas.device_schema import DeviceCreate, DeviceUpdate, DeviceResponse
 from app.services import device_service
 from app.dependencies.auth_dependency import get_current_active_user, require_admin_or_support, require_admin
 from app.models.user_model import User
-from app.main import limiter
+from app.rate_limit import limiter
 
 router = APIRouter(prefix="/devices", tags=["Devices"])
 
